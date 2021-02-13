@@ -1,19 +1,12 @@
 package dcode.model.response;
 
-import java.util.ArrayList;
-import java.util.List;
+import lombok.Builder;
+import lombok.Data;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
-
-@ToString(callSuper = true)
-@Setter
-@Getter
-public class ProductDetailResponse extends ProductResponse {
-	List<SubProductResponse> subProducts;
-	
-	public ProductDetailResponse() {
-		this.subProducts = new ArrayList<SubProductResponse>();
-	}
+@Data
+@Builder
+public class ProductDetailResponse {
+    private int id;
+    private String name;
+    private int price;
 }

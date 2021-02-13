@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,7 +27,7 @@ public class DcodeController {
     public ResponseEntity<List<ProductListResponse>> getProducts() {
         List<ProductListResponse> response = service.getProducts();
         
-        HttpStatus httpStatus = 0 < response.size() ? HttpStatus.OK : HttpStatus.NO_CONTENT;
+        HttpStatus httpStatus = ObjectUtils.isEmpty(response) ? HttpStatus.NO_CONTENT : HttpStatus.OK;
 
         return new ResponseEntity<>(response, httpStatus);
     }
@@ -35,7 +36,9 @@ public class DcodeController {
     @GetMapping("/products/{productId}")
     public ResponseEntity<ProductDetailResponse> getProductDetail(@PathVariable("productId") int productId) {
     	ProductDetailResponse response = service.getProductDetail(productId);
+    	
+    	HttpStatus httpStatus = 0 < response.getId() ? HttpStatus.OK : HttpStatus.NO_CONTENT;
     		
-    	return new ResponseEntity<>(response, HttpStatus.OK);
+    	return new ResponseEntity<>(response, httpStatus);
     }
 }

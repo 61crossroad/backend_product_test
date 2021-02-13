@@ -36,7 +36,11 @@ public class ProductRepository {
     public List<ProductComposition> getProductCompositionList(int compId) {
     	String query =
     			"SELECT pc.comp_id, pc.represent, pc.optional, pc.discount, ct.type_id, ct.type_name"
-    			+ ", p.id, p.name, p.price, p.quantity, p.category FROM product_composition pc"
+    			+ ", p.id, p.name, p.price, p.quantity, p.category"
+    			+ ", (SELECT MIN(p_min.quantity) FROM product_composition pc_min"
+    			+ " INNER JOIN product p_min ON p_min.id = pc_min.product_id"
+    			+ " WHERE pc_min.comp_id = pc.comp_id) AS min_quantity"
+    			+ " FROM product_composition pc"
     			+ " INNER JOIN composition_type ct ON ct.type_id = pc.type_id"
     			+ " INNER JOIN product p ON p.id = pc.product_id"
     			+ " WHERE pc.comp_id = :compId";
@@ -67,6 +71,7 @@ public class ProductRepository {
     					.represent(rs.getBoolean("represent"))
     					.optional(rs.getBoolean("optional"))
     					.discount(rs.getInt("discount"))
+    					.minQuantity(rs.getInt("min_quantity"))
     					.build()
     	);
     }

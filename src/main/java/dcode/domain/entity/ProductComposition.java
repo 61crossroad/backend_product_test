@@ -13,15 +13,19 @@ public class ProductComposition {
 	private boolean represent;
 	private boolean optional;
 	private int discount;
+	private int minQuantity;
 	
 	public ProductListResponse toListResponse() {
 		return ProductListResponse.builder()
 				.id(this.compId)
 				.name(this.product.getName())
 				.price(this.getProduct().getPrice() - this.discount)
-				.productCount(this.product.getCount())
-				.productStatus(this.product.getCount() == 0 ? "sold out" : "")
+				.quantity(this.product.getQuantity())
+				// .status(this.product.getQuantity() == 0 ? "sold out" : "")
+				.typeId(this.compositionType.getTypeId())
 				.typeName(this.compositionType.getTypeName())
+				.optional(this.optional)
+				.minQuantity(this.minQuantity)
 				.build();
 	}
 }

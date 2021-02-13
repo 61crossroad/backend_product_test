@@ -13,25 +13,27 @@ import dcode.repository.ProductRepository;
 @SpringBootTest
 public class ProductRepositoryTest {
 	@Autowired
-	private ProductRepository productRepository;
+	private ProductRepository repository;
 	
 	/* @Test
 	public void getProduct_returnDataSqlProduct() {
-		Product product = productRepository.getProduct(1);
+		Product product = repository.getProduct(1);
 		System.out.println(product.getId() + ", " + product.getName() + ", " + product.getPrice());
 	} */
 	
-	/* @Test
+	@Test
 	public void getRepresentList() {
-		List<ProductComposition> list = productRepository.getProductCompositionRepresentList();
+		System.out.println("\nProductRepositoryTest#getRepresentList");
+		List<ProductComposition> list = repository.getProductCompositionRepresentList();
 		list.forEach(product -> {
 			System.out.println(product.toString());
 		});
-	} */
+	}
 	
 	@Test
 	public void getCompositionList() {
-		List<ProductComposition> list = productRepository.getProductCompositionList(11);
+		System.out.println("\nProductRepositoryTest#getCOmpositiontList");
+		List<ProductComposition> list = repository.getProductCompositionList(11);
 		list.forEach(product -> {
 			System.out.println(product.toString());
 		});

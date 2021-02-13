@@ -36,7 +36,7 @@ public class ProductRepository {
     public List<ProductComposition> getProductCompositionList(int compId) {
     	String query =
     			"SELECT pc.comp_id, pc.represent, pc.optional, pc.discount, ct.type_id, ct.type_name"
-    			+ ", p.id, p.name, p.price, p.count, p.category FROM product_composition pc"
+    			+ ", p.id, p.name, p.price, p.quantity, p.category FROM product_composition pc"
     			+ " INNER JOIN composition_type ct ON ct.type_id = pc.type_id"
     			+ " INNER JOIN product p ON p.id = pc.product_id"
     			+ " WHERE pc.comp_id = :compId";
@@ -60,7 +60,7 @@ public class ProductRepository {
     							.id(rs.getInt("id"))
     							.name(rs.getString("name"))
     							.price(rs.getInt("price"))
-    							.count(rs.getInt("count"))
+    							.quantity(rs.getInt("quantity"))
     							.category(rs.getString("category"))
     							.build()
     					)
@@ -73,10 +73,10 @@ public class ProductRepository {
     
     public List<ProductComposition> getProductCompositionRepresentList() {
     	String query = 
-    			"SELECT pc.comp_id, pc.discount, ct.type_name, p.name, p.price"
-    			+ ", (SELECT MIN(p_min.count) count FROM product_composition pc_min"
+    			"SELECT pc.comp_id, pc.discount, ct.type_id, ct.type_name, p.name, p.price, p.quantity"
+    			+ ", (SELECT MIN(p_min.quantity) FROM product_composition pc_min"
     			+ " INNER JOIN product p_min ON p_min.id = pc_min.product_id"
-    			+ " WHERE pc_min.comp_id = pc.comp_id) AS count"
+    			+ " WHERE pc_min.comp_id = pc.comp_id) AS min_quantity"
     			+ " FROM product_composition pc"
     			+ " INNER JOIN composition_type ct ON ct.type_id = pc.type_id"
     			+ " INNER JOIN product p ON p.id = pc.product_id"
@@ -85,21 +85,23 @@ public class ProductRepository {
     	return namedParameterJdbcTemplate.query(
     			query,
     			(rs, rowNum) -> ProductComposition.builder()
-    			.compId(rs.getInt("comp_id"))
-    			.compositionType(
-    					CompositionType.builder()
-    					.typeName(rs.getString("type_name"))
+    					.compId(rs.getInt("comp_id"))
+    					.compositionType(
+    							CompositionType.builder()
+    							.typeId(rs.getInt("type_id"))
+    							.typeName(rs.getString("type_name"))
+    							.build()
+    					)
+    					.product(
+    							Product.builder()
+    							.name(rs.getString("name"))
+    							.price(rs.getInt("price"))
+    							.quantity(rs.getInt("quantity"))
+    							.build()
+    					)
+    					.discount(rs.getInt("discount"))
+    					.minQuantity(rs.getInt("min_quantity"))
     					.build()
-    			)
-    			.product(
-    					Product.builder()
-    					.name(rs.getString("name"))
-    					.price(rs.getInt("price"))
-    					.count(rs.getInt("count"))
-    					.build()
-    			)
-    			.discount(rs.getInt("discount"))
-    			.build()
     	);
     }
 }

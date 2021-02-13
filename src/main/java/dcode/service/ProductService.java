@@ -24,18 +24,20 @@ public class ProductService {
     	
     	List<ProductComposition> productCompositionList = repository.getProductCompositionRepresentList();
     	productCompositionList.forEach(pc -> {
-    		response.add(pc.toListResponse());
+    		response.add(pc.toListResponse().get());
     	});
     	
     	return response;
     }
 
-    public ProductDetailResponse getProductDetail(Integer compId){
+    public ProductDetailResponse getProductDetail(int compId){
     	// System.out.println("상품 상세 api를 완성 시켜주세요.");
     	// return ProductDetailResponse.builder().id(1).build();
     	
+    	ProductDetailResponse response = new ProductDetailResponse();
+    	
     	List<ProductComposition> productCompositionList = repository.getProductCompositionList(compId);
     	
-    	return null;
+    	return response;
     }
 }

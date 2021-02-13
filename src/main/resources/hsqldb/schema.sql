@@ -6,7 +6,7 @@ CREATE TABLE product(
     id INTEGER NOT NULL,
     name VARCHAR(255),
     price INTEGER,
-    count INTEGER NOT NULL,
+    quantity INTEGER NOT NULL,
     category VARCHAR(255),
     PRIMARY KEY (id)
 );

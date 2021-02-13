@@ -1,13 +1,12 @@
 DROP TABLE product IF EXISTS ;
 DROP TABLE composition_type IF EXISTS ;
 DROP TABLE product_composition IF EXISTS ;
-DROP TABLE product_composition_rel IF EXISTS ;
 
 CREATE TABLE product(
     id INTEGER NOT NULL,
     name VARCHAR(255),
     price INTEGER,
-    quantity INTEGER,
+    count INTEGER NOT NULL,
     category VARCHAR(255),
     PRIMARY KEY (id)
 );
@@ -19,29 +18,18 @@ CREATE TABLE composition_type(
 );
 
 CREATE TABLE product_composition(
+	seq INTEGER NOT NULL,
 	comp_id INTEGER NOT NULL,
-	type_id INTEGER,
-	product_id INTEGER,
-	PRIMARY KEY (comp_id)
-);
-
-CREATE TABLE product_composition_rel(
-	rel_id INTEGER NOT NULL,
-	comp_id INTEGER,
-	product_id INTEGER,
-	discount DECIMAL(5, 2),
-	optional TINYINT,
-	PRIMARY KEY (rel_id)
+	type_id INTEGER NOT NULL,
+	product_id INTEGER NOT NULL,
+	represent TINYINT NOT NULL,
+	optional TINYINT NOT NULL,
+	discount INTEGER,
+	PRIMARY KEY (seq)
 );
 
 ALTER TABLE product_composition ADD CONSTRAINT product_composition_type FOREIGN KEY (type_id)
-REFERENCES composition_type(type_id) ON UPDATE CASCADE ON DELETE SET NULL;
+REFERENCES composition_type(type_id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 ALTER TABLE product_composition ADD CONSTRAINT product_composition_product FOREIGN KEY (product_id)
-REFERENCES product(id) ON UPDATE CASCADE ON DELETE CASCADE;
-
-ALTER TABLE product_composition_rel ADD CONSTRAINT composition_rel FOREIGN KEY (comp_id)
-REFERENCES product_composition(comp_id) ON UPDATE CASCADE ON DELETE CASCADE;
-
-ALTER TABLE product_composition_rel ADD CONSTRAINT composition_product_rel FOREIGN KEY (product_id)
 REFERENCES product(id) ON UPDATE CASCADE ON DELETE CASCADE;

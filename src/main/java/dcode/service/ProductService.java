@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Queue;
 
 import org.springframework.stereotype.Service;
@@ -21,6 +22,8 @@ public class ProductService {
     private final ProductRepository repository;
 
     public List<ProductListResponse> getProducts(){
+    	System.out.println("ProductService#getProducts");
+    	
         List<Product> productList = repository.getProductList();
         List<ProductType> productTypeList = repository.getProductTypeList();
         
@@ -29,16 +32,21 @@ public class ProductService {
         
         productTypeList.forEach(productType -> {
         	List<TypeDesc> typeDescList = productType.getTypeDescList();
-        	int firstCatId = typeDescList.get(0).getCatId();
         	
         	// init queue
         	queue.clear();
+        	
+        	int firstCatId = typeDescList.get(0).getCatId();
+        	String firstAttr = typeDescList.get(0).getAttribute();
+        	
+        	// push initial products
         	productList.forEach(product -> {
         		if (firstCatId == 0 || firstCatId == product.getCategory().getId()) {
-        			String id = Integer.toString(productType.getId() * 10) + Integer.toString(product.getId() * 10);
+        			String uid = Integer.toString(productType.getId()) + "t" + Integer.toString(product.getId()) + firstAttr;
         			
         			queue.add(Product.builder()
-        					.idStr(id)
+        					.id(product.getId())
+        					.uid(uid)
         					.name(product.getName())
         					.price(product.getPrice())
         					.quantity(product.getQuantity())
@@ -54,26 +62,32 @@ public class ProductService {
         		Product element = queue.poll(); // pop product
         		int nextDepth = element.getDepth() + 1;
         		
-        		if (nextDepth == typeDescList.size()) { // add leaf node to the ResponseList
+        		if (nextDepth == typeDescList.size()) {
+        			// add leaf element to the ResponseList
         			productListResponseList.add(
-        					element.toListResponse(productType, typeDescList.get(nextDepth - 1))
+        					element.toListResponse(
+        							productType,
+        							typeDescList.get(nextDepth - 1))
         			);
         		} else {
+        			// push products
         			TypeDesc nextTypeDesc = typeDescList.get(nextDepth);
         			
-        			// push product
         			productList.forEach(product -> {
         				int nextCatId =nextTypeDesc.getCatId();
+        				String nextAttr = nextTypeDesc.getAttribute();
         				if (nextCatId == 0 || nextCatId == product.getCategory().getId()) {
         					// handle quantity for sub & optional products
         					int quantity = element.getQuantity();
-        					if (!"O".equals(nextTypeDesc.getAttribute()) && product.getQuantity() < quantity) {
+        					if (!"o".equals(nextTypeDesc.getAttribute()) // optional product attribute
+        							&& product.getQuantity() < quantity) {
         						quantity = product.getQuantity();
         					}
         					// end handle quantity for sub & optional products
         					
         					queue.add(Product.builder()
-        							.idStr(element.getIdStr() + Integer.toString(product.getId() * 10))
+        							.id(product.getId())
+        							.uid(element.getUid() + Integer.toString(product.getId()) + nextAttr)
         							.name(element.getName())
         							.price(element.getPrice())
         							.quantity(quantity)
@@ -82,7 +96,7 @@ public class ProductService {
         					);
         				}
         			});
-        			// end push
+        			// end push products
         		}
         	}
         	// end traverse queue for each ProductType
@@ -92,24 +106,50 @@ public class ProductService {
     }
 
     public List<ProductDetailResponse> getProductDetail(String productId){
-        // parse productId
-        int typeId = 2;
-        List<Integer> ids = new ArrayList<>(); ids.add(3); ids.add(10);
-        // end parse productId
-        
+    	System.out.println("ProductService#getProductDetail");
+    	
+    	// parse productId
+    	String[] idSplit = productId.split("[^0-9]");
+    	int typeId = Integer.parseInt(Optional.ofNullable(idSplit[0]).orElse("0"));
+    	List<Integer> ids = new ArrayList<>();
+    	
+    	for (int i = 1; i < idSplit.length; i++) {
+    		ids.add(Integer.parseInt(idSplit[i]));
+    	}
+    	// end parse productId
+
         ProductType productType = repository.getProductType(typeId);
         List<Product> productList = repository.getProductList(ids);
+        List<TypeDesc> typeDescList = productType.getTypeDescList();
+        
+        // get minimum quantity (except for optional products)
+        int minQuantity = Integer.MAX_VALUE;
+        for (Product product : productList) {
+        	TypeDesc type = typeDescList.stream()
+        			.filter(t -> (t.getCatId() == 0 || t.getCatId() == product.getCategory().getId()))
+        			.findAny().orElse(TypeDesc.builder().build());
+        	if (!"o".equals(type.getAttribute()) && product.getQuantity() < minQuantity) {
+        		minQuantity = product.getQuantity();
+        	}
+        }
+        // end get minimum quantity (except for optional products)
         
         List<ProductDetailResponse> productDetailResponseList = new ArrayList<>();
         
-        productType.getTypeDescList().forEach(typeDesc -> {
+        for (TypeDesc typeDesc : typeDescList) {
         	// select Product by catId
+        	int catId = typeDesc.getCatId();
         	Product product = productList.stream()
-        		.filter(p -> p.getCategory().getId() == typeDesc.getCatId())
-        		.findAny().orElse(Product.builder().id(0).name("상품 없음").build());
+        			.filter(p -> (catId == 0 || catId == p.getCategory().getId()))
+        			.findAny().orElse(Product.builder().id(0).name("상품 없음").build());
         	
-    		productDetailResponseList.add(product.toDetailResponse(productType, typeDesc));
-        });
+    		productDetailResponseList.add(
+    				product.toDetailResponse(
+    						productType,
+    						typeDesc,
+    						minQuantity)
+    		);
+        }
         
         return productDetailResponseList;
     }

@@ -17,11 +17,9 @@ public class ProductServiceTest {
 	
 	@Test
 	public void testGetProductDetail() {
-		List<ProductDetailResponse> list = service.getProductDetail("test");
+		List<ProductDetailResponse> list = service.getProductDetail("3t5m9o");
 		
-		list.forEach(product -> {
-			System.out.println(product.toString());
-		});
+		list.forEach(product -> System.out.println(product.toString()));
 		System.out.println();
 	}
 	
@@ -30,9 +28,7 @@ public class ProductServiceTest {
 	public void testGetProducts() {
 		List<ProductListResponse> list = service.getProducts();
 		
-		list.forEach(product -> {
-			System.out.println(product.toString());
-		});
+		list.forEach(product -> System.out.println(product.toString()));
 		System.out.println();
 	}
 	*/

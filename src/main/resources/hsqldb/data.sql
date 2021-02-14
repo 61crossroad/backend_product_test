@@ -25,16 +25,16 @@ INSERT INTO product_type VALUES(4, '옵션 상품');
 INSERT INTO product_type VALUES(5, '묶음상품 (티셔츠+모자)');
 INSERT INTO product_type VALUES(6, '옵션 상품 3개');
 
--- M: 대표상품, P: 1+1 상품, S: 서브상품, O: 옵션상품
+-- m: 대표상품, p: 1+1 상품, s: 서브상품, o: 옵션상품
 -- 상품 형태별로 상품들의 순서는 테이블에 저장된 순서와 같다고 가정했습니다.
 -- 그러므로 각 상품 형태에서 대표상품이 항상 첫번째 row로 조회되며, 순서에 관한 처리는 따로 하지 않았습니다.
-INSERT INTO type_desc VALUES(1, 2, 3, 'P', 0); -- discount null?
-INSERT INTO type_desc VALUES(2, 3, 4, 'M', 0);
-INSERT INTO type_desc VALUES(3, 3, 5, 'S', 0);
-INSERT INTO type_desc VALUES(4, 4, 2, 'M', 0);
-INSERT INTO type_desc VALUES(5, 4, 1, 'O', 10);
-INSERT INTO type_desc VALUES(6, 5, 3, 'M', 0);
-INSERT INTO type_desc VALUES(7, 5, 5, 'S', 0);
-INSERT INTO type_desc VALUES(8, 6, 6, 'M', 0);
-INSERT INTO type_desc VALUES(9, 6, 2, 'O', 0);
-INSERT INTO type_desc VALUES(10, 6, 3, 'O', 0);
+INSERT INTO type_desc VALUES(1, 2, 3, 'p', 0);
+INSERT INTO type_desc VALUES(2, 3, 4, 'm', 0);
+INSERT INTO type_desc VALUES(3, 3, 5, 's', 0);
+INSERT INTO type_desc VALUES(4, 4, 2, 'm', 0);
+INSERT INTO type_desc VALUES(5, 4, 1, 'o', 10);
+INSERT INTO type_desc VALUES(6, 5, 3, 'm', 0);
+INSERT INTO type_desc VALUES(7, 5, 5, 's', 0);
+INSERT INTO type_desc VALUES(8, 6, 6, 'm', 0);
+INSERT INTO type_desc VALUES(9, 6, 2, 'o', 20);
+INSERT INTO type_desc VALUES(10, 6, 3, 'o', 50);

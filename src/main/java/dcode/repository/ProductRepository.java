@@ -71,7 +71,7 @@ public class ProductRepository {
         				resultName = rs.getString("name");
         				TypeDesc result = TypeDesc.builder()
         						.catId(rs.getInt("cat_id"))
-        						.attribute(Optional.ofNullable(rs.getString("attribute")).orElse("M"))
+        						.attribute(Optional.ofNullable(rs.getString("attribute")).orElse("m"))
         						.discount(rs.getInt("discount"))
         						.build();
         				
@@ -112,7 +112,7 @@ public class ProductRepository {
     						result.getTypeDescList().add(
     								TypeDesc.builder()
     										.catId(rs.getInt("cat_id"))
-    										.attribute(Optional.ofNullable(rs.getString("attribute")).orElse("M"))
+    										.attribute(Optional.ofNullable(rs.getString("attribute")).orElse("m"))
     										.discount(rs.getInt("discount"))
     										.build()
     						);

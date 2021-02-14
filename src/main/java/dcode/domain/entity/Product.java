@@ -15,7 +15,7 @@ public class Product {
     private Category category;
     
     // fields for queue traverse
-    private String idStr;
+    private String uid;
     private String attribute;
 	private int discount;
 	private int depth;
@@ -23,20 +23,34 @@ public class Product {
 	
 	// handle quantity status
 	private String getStatus(String attribute) {
-		if ("P".equals(attribute)) {
-			return this.quantity < 2 ? "sold out" : "";
-		} else {
-			return 0 < this.quantity ? "" : "sold out";
-		}
+		return this.getStatus(attribute, this.quantity);
 	}
 	
+	private String getStatus(String attribute, int quantity) {
+		if ("p".equals(attribute)) { // 1+1 attribute
+			return quantity < 2 ? "sold out" : "";
+		} else {
+			return 0 < quantity ? "" : "sold out";
+		}
+	}
+	// end handle quantity status
+	
 	// create detail response object
-	public ProductDetailResponse toDetailResponse(ProductType type, TypeDesc desc) {
+	public ProductDetailResponse toDetailResponse(ProductType type, TypeDesc desc, int minQuantity) {
+		// handle quantity status
+		int quantity;
+		if (!"o".equals(desc.getAttribute())) { // optional product attribute
+			quantity = minQuantity;
+		} else {
+			quantity = this.quantity;
+		}
+		// end handle quantity status
+		
 		return ProductDetailResponse.builder()
 				.id(this.id)
 				.name(this.name)
 				.price(this.price * (100 - desc.getDiscount()) / 100)
-				.status(this.getStatus(desc.getAttribute()))
+				.status(this.getStatus(desc.getAttribute(), quantity))
 				.typeName(type.getName())
 				.attribute(desc.getAttribute())
 				.build();
@@ -45,7 +59,8 @@ public class Product {
 	// create list response object
 	public ProductListResponse toListResponse(ProductType type, TypeDesc desc) {
 		return ProductListResponse.builder()
-				.id(Integer.parseInt(this.idStr))
+				.id(this.id)
+				.uid(this.uid)
 				.name(this.name)
 				.price(this.price)
 				.status(this.getStatus(desc.getAttribute()))

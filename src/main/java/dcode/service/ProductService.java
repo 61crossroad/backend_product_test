@@ -3,7 +3,6 @@ package dcode.service;
 import dcode.domain.entity.Product;
 import dcode.domain.entity.ProductType;
 import dcode.domain.entity.TypeDesc;
-import dcode.model.queue.ProductQueue;
 import dcode.model.response.ProductDetailResponse;
 import dcode.model.response.ProductListResponse;
 import dcode.repository.ProductRepository;
@@ -25,8 +24,8 @@ public class ProductService {
         List<Product> productList = repository.getProductList();
         List<ProductType> productTypeList = repository.getProductTypeList();
         
-        List<ProductListResponse> productListResponseList = new ArrayList<ProductListResponse>();
-        Queue<ProductQueue> queue = new LinkedList<>();
+        List<ProductListResponse> productListResponseList = new ArrayList<>();
+        Queue<Product> queue = new LinkedList<>();
         
         productTypeList.forEach(productType -> {
         	List<TypeDesc> typeDescList = productType.getTypeDescList();
@@ -38,8 +37,8 @@ public class ProductService {
         		if (firstCatId == 0 || firstCatId == product.getCategory().getId()) {
         			String id = Integer.toString(productType.getId() * 10) + Integer.toString(product.getId() * 10);
         			
-        			queue.add(ProductQueue.builder()
-        					.id(id)
+        			queue.add(Product.builder()
+        					.idStr(id)
         					.name(product.getName())
         					.price(product.getPrice())
         					.quantity(product.getQuantity())
@@ -48,28 +47,33 @@ public class ProductService {
         			);
         		}
         	});
+        	// end init queue
         	
-        	// traverse queue
+        	// traverse queue for each ProductType
         	while (!queue.isEmpty()) {
-        		// pop
-        		ProductQueue element = queue.poll();
+        		Product element = queue.poll(); // pop product
         		int nextDepth = element.getDepth() + 1;
         		
-        		if (nextDepth == typeDescList.size()) { // leaf node
-        			productListResponseList.add(element.toListResponse(productType.getId(), productType.getName()));
+        		if (nextDepth == typeDescList.size()) { // add leaf node to the ResponseList
+        			productListResponseList.add(
+        					element.toListResponse(productType, typeDescList.get(nextDepth - 1))
+        			);
         		} else {
         			TypeDesc nextTypeDesc = typeDescList.get(nextDepth);
         			
-        			// push
+        			// push product
         			productList.forEach(product -> {
-        				if (product.getCategory().getId() == nextTypeDesc.getCatId()) {
+        				int nextCatId =nextTypeDesc.getCatId();
+        				if (nextCatId == 0 || nextCatId == product.getCategory().getId()) {
+        					// handle quantity for sub & optional products
         					int quantity = element.getQuantity();
-        					if (productType.getId() != 4 && product.getQuantity() < quantity) {
+        					if (!"O".equals(nextTypeDesc.getAttribute()) && product.getQuantity() < quantity) {
         						quantity = product.getQuantity();
         					}
+        					// end handle quantity for sub & optional products
         					
-        					queue.add(ProductQueue.builder()
-        							.id(element.getId() + Integer.toString(product.getId() * 10))
+        					queue.add(Product.builder()
+        							.idStr(element.getIdStr() + Integer.toString(product.getId() * 10))
         							.name(element.getName())
         							.price(element.getPrice())
         							.quantity(quantity)
@@ -78,15 +82,35 @@ public class ProductService {
         					);
         				}
         			});
+        			// end push
         		}
         	}
+        	// end traverse queue for each ProductType
         });
         
         return productListResponseList;
     }
 
-    public ProductDetailResponse getProductDetail(){
-        System.out.println("상품 상세 api를 완성 시켜주세요.");
-        return ProductDetailResponse.builder().id(1).build();
+    public List<ProductDetailResponse> getProductDetail(String productId){
+        // parse productId
+        int typeId = 2;
+        List<Integer> ids = new ArrayList<>(); ids.add(3); ids.add(10);
+        // end parse productId
+        
+        ProductType productType = repository.getProductType(typeId);
+        List<Product> productList = repository.getProductList(ids);
+        
+        List<ProductDetailResponse> productDetailResponseList = new ArrayList<>();
+        
+        productType.getTypeDescList().forEach(typeDesc -> {
+        	// select Product by catId
+        	Product product = productList.stream()
+        		.filter(p -> p.getCategory().getId() == typeDesc.getCatId())
+        		.findAny().orElse(Product.builder().id(0).name("상품 없음").build());
+        	
+    		productDetailResponseList.add(product.toDetailResponse(productType, typeDesc));
+        });
+        
+        return productDetailResponseList;
     }
 }

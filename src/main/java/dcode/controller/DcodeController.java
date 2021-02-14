@@ -31,9 +31,8 @@ public class DcodeController {
 
     //상품 상세 api
     @GetMapping("/products/{productId}")
-    public ResponseEntity<ProductDetailResponse> getProductDetail(@PathVariable("productId") String productId) {
-    	// parse productId
-        ProductDetailResponse response = service.getProductDetail();
+    public ResponseEntity<List<ProductDetailResponse>> getProductDetail(@PathVariable("productId") String productId) {
+        List<ProductDetailResponse> response = service.getProductDetail(productId);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

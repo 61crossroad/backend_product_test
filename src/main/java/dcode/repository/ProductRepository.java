@@ -20,23 +20,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class ProductRepository {
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
-    public Product getProduct(int id) {
-        String query = "SELECT * FROM `product` WHERE id = :id ";
-
-        MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("id", id);
-
-        return namedParameterJdbcTemplate.queryForObject(
-                query,
-                params,
-                (rs, rowNum) -> Product.builder()
-                        .id(rs.getInt("id"))
-                        .name(rs.getString("name"))
-                        .price(rs.getInt("price"))
-                        .build()
-        );
-    }
     
     public List<Product> getProductList() {
     	return this.getProductList(new ArrayList<>());

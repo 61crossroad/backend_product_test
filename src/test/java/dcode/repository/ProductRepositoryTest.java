@@ -15,28 +15,31 @@ public class ProductRepositoryTest {
 	@Autowired
 	ProductRepository repository;
 	
+	/*
 	@Test
 	public void testGetProductListInParams() {
-		List<Integer> params = Arrays.stream(new Integer[] {2, 3, 4}).collect(Collectors.toList());
+		List<Integer> ids = Arrays.stream(new Integer[] {2, 3, 4}).collect(Collectors.toList());
 		
-		List<Product> list = repository.getProductList(params);
+		List<Product> list = repository.getProductList(ids);
 		
 		list.forEach(product -> {
 			System.out.println(product.toString());
 		});
 		System.out.println();
 	}
+	*/
 	
-	/*
 	@Test
 	public void testGetProductType() {
-		for (int i = 1; i <= 6; i++) {
+		for (int i = 1; i <= 7; i++) {
 			ProductType type = repository.getProductType(i);
 			
 			System.out.println(type.toString());
 		}
 		System.out.println();
 	}
+	
+	/*
 	@Test
 	public void testGetProductTypeList() {
 		List<ProductType> list = repository.getProductTypeList();

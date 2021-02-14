@@ -15,6 +15,7 @@ public class ProductRepositoryTest {
 	@Autowired
 	ProductRepository repository;
 	
+	/*
 	@Test
 	public void testGetProductListInParams() {
 		List<Integer> ids = Arrays.stream(new Integer[] {2, 3, 4}).collect(Collectors.toList());
@@ -50,4 +51,5 @@ public class ProductRepositoryTest {
 		list.forEach(product -> System.out.println(product.toString()));
 		System.out.println();
 	}
+	*/
 }

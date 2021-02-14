@@ -1,4 +1,4 @@
-package dcode.repository;
+package dcode.service;
 
 import java.util.List;
 
@@ -17,7 +17,7 @@ public class ProductServiceTest {
 	
 	@Test
 	public void testGetProductDetail() {
-		List<ProductDetailResponse> list = service.getProductDetail("3t5m9o");
+		List<ProductDetailResponse> list = service.getProductDetail("4l3l2l");
 		
 		list.forEach(product -> System.out.println(product.toString()));
 		System.out.println();

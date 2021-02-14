@@ -39,11 +39,19 @@ public class ProductRepository {
     }
     
     public List<Product> getProductList() {
+    	return this.getProductList(new ArrayList<>());
+    }
+    
+    public List<Product> getProductList(List<Integer> ids) {
     	String query = "SELECT p.id, p.name, p.price, p.quantity, c.id AS cat_id, c.name AS cat_name FROM product p"
-    			+ " LEFT OUTER JOIN category c ON c.id = p.cat_id";
+    			+ " LEFT OUTER JOIN category c ON c.id = p.cat_id"
+    			+ (ids.isEmpty() ? "" : " WHERE p.id IN (:ids)");
+    	
+    	MapSqlParameterSource params = new MapSqlParameterSource("ids", ids);
     	
     	return namedParameterJdbcTemplate.query(
     			query,
+    			params,
     			(rs, rowNum) -> Product.builder()
     					.id(rs.getInt("id"))
     					.name(rs.getString("name"))
@@ -56,8 +64,43 @@ public class ProductRepository {
     							.build()
     					)
     					.build()
-    				
     	);
+    }
+    
+    public ProductType getProductType(int id) {
+    	String query = "SELECT pt.id, pt.name, td.cat_id, td.attribute, td.discount FROM product_type pt"
+    			+ " LEFT OUTER JOIN type_desc td ON td.type_id = pt.id"
+    			+ " WHERE pt.id = :id";
+    	
+    	MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("id", id);
+        
+        return namedParameterJdbcTemplate.query(
+        		query,
+        		params,
+        		rs -> {
+        			ProductType resultMap = ProductType.builder().typeDescList(new ArrayList<>()).build();
+        			int resultId = 0;
+        			String resultName = "";
+        			
+        			while (rs.next()) {
+        				resultId = rs.getInt("id");
+        				resultName = rs.getString("name");
+        				TypeDesc result = TypeDesc.builder()
+        						.catId(rs.getInt("cat_id"))
+        						.attribute(Optional.ofNullable(rs.getString("attribute")).orElse("M"))
+        						.discount(rs.getInt("discount"))
+        						.build();
+        				
+        				resultMap.getTypeDescList().add(result);
+        			}
+        			
+        			resultMap.setId(resultId);
+        			resultMap.setName(resultName);
+        			
+        			return resultMap;
+        		}
+        );
     }
     
     public List<ProductType> getProductTypeList() {
@@ -71,33 +114,32 @@ public class ProductRepository {
     				Map<Integer, ProductType> resultMap = new LinkedHashMap<>();
     				
     				while (rs.next()) {
-    					Integer id = rs.getInt("id");
+    					Integer resultId = rs.getInt("id");
     					
-    					ProductType productType = resultMap.getOrDefault(
-    							id,
+    					ProductType result = resultMap.getOrDefault(
+    							resultId,
     							ProductType.builder()
-    								.id(id)
-    								.name(rs.getString("name"))
-    								.typeDescList(new ArrayList<TypeDesc>())
-    								.build()
+    									.id(resultId)
+    									.name(rs.getString("name"))
+    									.typeDescList(new ArrayList<>())
+    									.build()
     					);
     					
     					if (Optional.ofNullable(rs.getInt("cat_id")).isPresent()) {
-    						productType.getTypeDescList().add(
+    						result.getTypeDescList().add(
     								TypeDesc.builder()
-    								.catId(rs.getInt("cat_id"))
-    								.attribute(Optional.ofNullable(rs.getString("attribute")).orElse("M"))
-    								.discount(rs.getInt("discount"))
-    								.build()
+    										.catId(rs.getInt("cat_id"))
+    										.attribute(Optional.ofNullable(rs.getString("attribute")).orElse("M"))
+    										.discount(rs.getInt("discount"))
+    										.build()
     						);
     					}
     					
-    					resultMap.put(id, productType);
+    					resultMap.put(resultId, result);
     				}
     				
     				return new ArrayList<ProductType>(resultMap.values());
     			}
-    			
     	);
     }
 }

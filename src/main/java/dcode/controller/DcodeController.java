@@ -33,7 +33,8 @@ public class DcodeController {
     @GetMapping("/products/{productId}")
     public ResponseEntity<List<ProductDetailResponse>> getProductDetail(@PathVariable("productId") String productId) {
         List<ProductDetailResponse> response = service.getProductDetail(productId);
+        HttpStatus httpStatus = response.isEmpty() ? HttpStatus.NOT_FOUND : HttpStatus.OK;
 
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return new ResponseEntity<>(response, httpStatus);
     }
 }

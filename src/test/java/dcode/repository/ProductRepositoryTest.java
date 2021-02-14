@@ -15,19 +15,15 @@ public class ProductRepositoryTest {
 	@Autowired
 	ProductRepository repository;
 	
-	/*
 	@Test
 	public void testGetProductListInParams() {
 		List<Integer> ids = Arrays.stream(new Integer[] {2, 3, 4}).collect(Collectors.toList());
 		
 		List<Product> list = repository.getProductList(ids);
 		
-		list.forEach(product -> {
-			System.out.println(product.toString());
-		});
+		list.forEach(product -> System.out.println(product.toString()));
 		System.out.println();
 	}
-	*/
 	
 	@Test
 	public void testGetProductType() {
@@ -39,14 +35,11 @@ public class ProductRepositoryTest {
 		System.out.println();
 	}
 	
-	/*
 	@Test
 	public void testGetProductTypeList() {
 		List<ProductType> list = repository.getProductTypeList();
 		
-		list.forEach(productType -> {
-			System.out.println(productType.toString());
-		});
+		list.forEach(productType -> System.out.println(productType.toString()));
 		System.out.println();
 	}
 	
@@ -54,18 +47,7 @@ public class ProductRepositoryTest {
 	public void testGetProductList() {
 		List<Product> list = repository.getProductList();
 		
-		list.forEach(product -> {
-			System.out.println(product.toString());
-		});
+		list.forEach(product -> System.out.println(product.toString()));
 		System.out.println();
 	}
-	
-	@Test
-	public void testGetProduct() {
-		Product product = repository.getProduct(1);
-		
-		System.out.println(product.toString());
-		System.out.println();
-	}
-	*/
 }

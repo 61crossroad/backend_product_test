@@ -23,7 +23,6 @@ public class ProductServiceTest {
 		System.out.println();
 	}
 	
-	/*
 	@Test
 	public void testGetProducts() {
 		List<ProductListResponse> list = service.getProducts();
@@ -31,5 +30,4 @@ public class ProductServiceTest {
 		list.forEach(product -> System.out.println(product.toString()));
 		System.out.println();
 	}
-	*/
 }

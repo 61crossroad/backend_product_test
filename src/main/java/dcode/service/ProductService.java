@@ -11,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Queue;
 
 import org.springframework.stereotype.Service;
@@ -37,12 +36,12 @@ public class ProductService {
         	queue.clear();
         	
         	int firstCatId = typeDescList.get(0).getCatId();
-        	String firstAttr = typeDescList.get(0).getAttribute();
         	
         	// push initial products
         	productList.forEach(product -> {
         		if (firstCatId == 0 || firstCatId == product.getCategory().getId()) {
-        			String uid = Integer.toString(productType.getId()) + "t" + Integer.toString(product.getId()) + firstAttr;
+        			String uid = Integer.toString(productType.getId()) + this.getRandomStr()
+        					+ Integer.toString(product.getId()) + this.getRandomStr();
         			
         			queue.add(Product.builder()
         					.id(product.getId())
@@ -75,7 +74,6 @@ public class ProductService {
         			
         			productList.forEach(product -> {
         				int nextCatId =nextTypeDesc.getCatId();
-        				String nextAttr = nextTypeDesc.getAttribute();
         				if (nextCatId == 0 || nextCatId == product.getCategory().getId()) {
         					// handle quantity for sub & optional products
         					int quantity = element.getQuantity();
@@ -83,11 +81,10 @@ public class ProductService {
         							&& product.getQuantity() < quantity) {
         						quantity = product.getQuantity();
         					}
-        					// end handle quantity for sub & optional products
         					
         					queue.add(Product.builder()
         							.id(product.getId())
-        							.uid(element.getUid() + Integer.toString(product.getId()) + nextAttr)
+        							.uid(element.getUid() + Integer.toString(product.getId()) + this.getRandomStr())
         							.name(element.getName())
         							.price(element.getPrice())
         							.quantity(quantity)
@@ -106,17 +103,17 @@ public class ProductService {
     }
 
     public List<ProductDetailResponse> getProductDetail(String productId){
-    	System.out.println("ProductService#getProductDetail");
+    	System.out.println("ProductService#getProductDetail(" + productId + ")");
     	
-    	// parse productId
+    	// parse productId (no validation...)
     	String[] idSplit = productId.split("[^0-9]");
-    	int typeId = Integer.parseInt(Optional.ofNullable(idSplit[0]).orElse("0"));
-    	List<Integer> ids = new ArrayList<>();
+    	int typeId = Integer.parseInt(idSplit[0]);
     	
+    	List<Integer> ids = new ArrayList<>();
     	for (int i = 1; i < idSplit.length; i++) {
     		ids.add(Integer.parseInt(idSplit[i]));
     	}
-    	// end parse productId
+    	// end parse productId (no validation...)
 
         ProductType productType = repository.getProductType(typeId);
         List<Product> productList = repository.getProductList(ids);
@@ -143,6 +140,10 @@ public class ProductService {
         			.filter(p -> (catId == 0 || catId == p.getCategory().getId()))
         			.findAny().orElse(Product.builder().id(0).name("상품 없음").build());
         	
+        	if (product.getId() == 0) {
+        		return new ArrayList<ProductDetailResponse>();
+        	}
+        	
     		productDetailResponseList.add(
     				product.toDetailResponse(
     						productType,
@@ -152,5 +153,9 @@ public class ProductService {
         }
         
         return productDetailResponseList;
+    }
+    
+    private String getRandomStr() {
+    	return String.valueOf((char) (97 + ((int) (Math.random() * 26))));
     }
 }

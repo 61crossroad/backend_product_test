@@ -14,12 +14,12 @@ public class Product {
     private int quantity;
     private Category category;
     
-    // fields for queue traverse
     private String uid;
+    
+    // fields for queue traverse
     private String attribute;
 	private int discount;
 	private int depth;
-	// end fields for queue traverse
 	
 	// handle quantity status
 	private String getStatus(String attribute) {

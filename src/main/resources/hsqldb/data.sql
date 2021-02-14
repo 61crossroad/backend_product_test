@@ -12,6 +12,7 @@ INSERT INTO product VALUES(3, '상품-티셔츠-A', 300000, 33, 3);
 INSERT INTO product VALUES(4, '상품-바지-A', 400000, 44, 4);
 INSERT INTO product VALUES(5, '상품-모자-A', 500000, 55, 5);
 INSERT INTO product VALUES(6, '상품-반지-A', 600000, 66, 6);
+INSERT INTO product (id, name, price, quantity) VALUES(7, '상품-카테고리-X', 70007, 7);
 
 INSERT INTO product_type VALUES(1, '단품상품');
 INSERT INTO product_type VALUES(2, '1+1상품');

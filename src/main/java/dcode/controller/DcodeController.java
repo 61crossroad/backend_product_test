@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,7 +28,8 @@ public class DcodeController {
 
     //상품 상세 api
     @GetMapping("/products/{productId}")
-    public ResponseEntity<ProductDetailResponse> getProductDetail() {
+    public ResponseEntity<ProductDetailResponse> getProductDetail(@PathVariable("productId") String productId) {
+    	// parse productId
         ProductDetailResponse response = service.getProductDetail();
 
         return new ResponseEntity<>(response, HttpStatus.OK);

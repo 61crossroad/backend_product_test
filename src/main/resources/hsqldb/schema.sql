@@ -31,7 +31,7 @@ CREATE TABLE type_desc(
 	type_id INTEGER,
 	cat_id INTEGER,
 	attribute CHAR(1),
-	discount DEC(5, 2),
+	discount INTEGER,
 	PRIMARY KEY (seq)
 );
 

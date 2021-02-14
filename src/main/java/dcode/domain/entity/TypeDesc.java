@@ -8,5 +8,5 @@ import lombok.Data;
 public class TypeDesc {
 	private int catId;
 	private String attribute;
-	private double discount;
+	private int discount;
 }

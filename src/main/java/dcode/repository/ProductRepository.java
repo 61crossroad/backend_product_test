@@ -87,7 +87,7 @@ public class ProductRepository {
     								TypeDesc.builder()
     								.catId(rs.getInt("cat_id"))
     								.attribute(Optional.ofNullable(rs.getString("attribute")).orElse("M"))
-    								.discount(rs.getDouble("discount"))
+    								.discount(rs.getInt("discount"))
     								.build()
     						);
     					}

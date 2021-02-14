@@ -4,6 +4,9 @@ import dcode.model.response.ProductDetailResponse;
 import dcode.model.response.ProductListResponse;
 import dcode.service.ProductService;
 import lombok.RequiredArgsConstructor;
+
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,8 +23,8 @@ public class DcodeController {
 
     //상품 리스트 api
     @GetMapping("/products")
-    public ResponseEntity<ProductListResponse> getProducts() {
-        ProductListResponse response = service.getProducts();
+    public ResponseEntity<List<ProductListResponse>> getProducts() {
+        List<ProductListResponse> response = service.getProducts();
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

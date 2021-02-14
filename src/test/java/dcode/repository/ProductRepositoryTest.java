@@ -26,16 +26,20 @@ public class ProductRepositoryTest {
 	@Test
 	public void testGetProductList() {
 		List<Product> list = repository.getProductList();
-		list.forEach(product -> { System.out.println(product.toString()); });
 		
-		System.out.println("");
+		list.forEach(product -> {
+			System.out.println(product.toString());
+		});
+		System.out.println();
 	}
 	
 	@Test
 	public void testGetProductTypeList() {
 		List<ProductType> list = repository.getProductTypeList();
-		list.forEach(productType -> { System.out.println(productType.toString()); });
 		
-		System.out.println("");
+		list.forEach(productType -> {
+			System.out.println(productType.toString());
+		});
+		System.out.println();
 	}
 }

@@ -1,5 +1,7 @@
 # backend_product_test  
-#### JDK 1.8 | SpringBoot 2.3.4 | H2 Database  
+### JDK 1.8 | SpringBoot 2.3.4 | JdbcTemplate | H2 Database  
+#### n + 1 쿼리를 해결하기 위해 join된 각 Result Set을 LinkedHashMap에 매핑했다.  
+##### 쿼리 결과 중 중복된 키 컬럼 처리를 위해 Map을 사용했으며, 쿼리 순서대로 List에 넣기 위해 put 순서가 유지되는 LinkedHashMap을 사용했다.  
 상품 목록 : 신발1, 신발2, 가방1, 티셔츠1, 티셔츠2, 티셔츠3, 바지1, 모자1, 반지 ...  
 상품 구성 : 단품, 티셔츠 1+1, 바지+모자, 가방+신발(옵션) ...  
   
